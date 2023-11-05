@@ -9,5 +9,3 @@ class DocumentModel:
     type: Types
     header: str
     content: str
-    link: str
-

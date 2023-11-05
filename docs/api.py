@@ -1,15 +1,16 @@
-
+from docs.controller import DocumentController
 from tools.logger import Logger
 
 
 class DocumentApi:
-    def __init__(self, app, route):
+    def __init__(self, app, route, db):
         self.logger = Logger(app)
+        self.controller = DocumentController(db)
 
         @app.get(route + '/<id>')
         @self.logger.request_log('Получение документа')
         def get(id):
-            return "GET " + id
+            return self.controller.get()
 
         @app.delete(route + '/<id>')
         @self.logger.request_log('Удаление документа')
@@ -24,4 +25,4 @@ class DocumentApi:
         @app.post(route)
         @self.logger.request_log('Добавление документа')
         def post():
-            return 'POST'
+            return self.controller.create_document()
