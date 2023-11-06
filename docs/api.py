@@ -1,3 +1,7 @@
+import json
+
+from flask import Response
+
 from docs.controller import DocumentController
 from tools.logger import Logger
 
@@ -10,7 +14,12 @@ class DocumentApi:
         @app.get(route + '/<id>')
         @self.logger.request_log('Получение документа')
         def get(id):
-            return self.controller.get()
+            body = None
+            if id == 0:
+                body = self.controller.get_all_documents()
+            else:
+                body = self.controller.get_document(id)
+            return json.dumps(body)
 
         @app.delete(route + '/<id>')
         @self.logger.request_log('Удаление документа')

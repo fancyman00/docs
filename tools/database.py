@@ -23,11 +23,13 @@ class Database:
         try:
             cursor = self.connection.cursor()
             cursor.execute(sql_query, args)
-            cursor.close()
+            result = None
             if fetch:
-                return cursor.fetchone()
+                result = cursor.fetchone()
             else:
-                return Response(status=200)
+                result = ''
+            cursor.close()
+            return result
 
         except (Exception, Error) as error:
             return "Ошибка при работе с PostgreSQL" + error
