@@ -1,5 +1,4 @@
 import psycopg2
-from flask import Response
 from psycopg2 import Error
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
@@ -18,14 +17,17 @@ class Database:
     def __init__(self, user, password, host, port):
         self.connection = connect(user, password, host, port)
 
-    def execute(self, sql_query, args=(), fetch=False):
+    def execute(self, sql_query, args=(), fetch=False, count=False):
 
         try:
             cursor = self.connection.cursor()
             cursor.execute(sql_query, args)
             result = None
             if fetch:
-                result = cursor.fetchone()
+                if count:
+                    result = cursor.fetchmany(int(count))
+                else:
+                    result = cursor.fetchall()
             else:
                 result = ''
             cursor.close()

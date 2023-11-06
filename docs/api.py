@@ -1,9 +1,10 @@
 import json
 
-from flask import Response
+from flask import request
 
 from docs.controller import DocumentController
 from tools.logger import Logger
+from tools.request import required_payload
 
 
 class DocumentApi:
@@ -14,11 +15,14 @@ class DocumentApi:
         @app.get(route + '/<id>')
         @self.logger.request_log('Получение документа')
         def get(id):
-            body = None
-            if id == 0:
-                body = self.controller.get_all_documents()
-            else:
-                body = self.controller.get_document(id)
+            body = self.controller.get_document(id)
+            return json.dumps(body)
+
+        @app.get(route)
+        @self.logger.request_log('Получение документов')
+        def get_all():
+            count = request.args.get('count')
+            body = self.controller.get_all_documents(count)
             return json.dumps(body)
 
         @app.delete(route + '/<id>')
@@ -33,5 +37,6 @@ class DocumentApi:
 
         @app.post(route)
         @self.logger.request_log('Добавление документа')
-        def post():
-            return self.controller.create_document()
+        @required_payload('content', 'header', 'type')
+        def post(args):
+            return self.controller.create_document((args))
