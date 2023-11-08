@@ -35,8 +35,14 @@ class DocumentApi:
         def put(id):
             return 'PUT ' + id
 
+        @app.put(route + '/link/<id>')
+        @self.logger.request_log('Изменение связи документа')
+        @required_payload('type', 'link_id')
+        def link(payload, id):
+            return self.controller.create_document_link((int(id), *payload))
+
         @app.post(route)
         @self.logger.request_log('Добавление документа')
         @required_payload('content', 'header', 'type')
-        def post(args):
-            return self.controller.create_document((args))
+        def post(payload):
+            return self.controller.create_document((payload))

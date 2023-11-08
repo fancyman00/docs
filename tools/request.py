@@ -10,7 +10,7 @@ def required_payload(*args):
             json = request.get_json()
             check = [arg in json for arg in args]
             if all(check):
-                return func(tuple([json[arg] for arg in args]), **k)
+                return func(tuple([json[arg] for arg in args]), *k.values())
             else:
                 return Response(status=200, response="Payload doesnt exist")
         return wrapper
