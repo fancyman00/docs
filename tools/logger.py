@@ -1,5 +1,8 @@
 import functools
 import logging
+
+from flask import Response
+
 from tools.singelton import Singleton
 
 
@@ -17,7 +20,7 @@ class Logger(metaclass=Singleton):
     def info(self, msg: str):
         self.app.logger.info(msg)
 
-    def request_log(self, msg='Request Log'):
+    def request(self, msg='Request Log'):
         def decorator(func):
             @functools.wraps(func)
             def wrapper(*args, **kwargs):
@@ -26,6 +29,7 @@ class Logger(metaclass=Singleton):
                     return func(*args, **kwargs)
                 except Exception as error:
                     self.error(str(error))
+                    raise error
 
             return wrapper
 

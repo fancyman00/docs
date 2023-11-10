@@ -20,18 +20,18 @@ class Database:
     def execute(self, sql_query, args=(), fetch=False, count=False):
 
         try:
-            cursor = self.connection.cursor()
-            cursor.execute(sql_query, args)
-            result = None
-            if fetch:
-                if count:
-                    result = cursor.fetchmany(int(count))
+            with self.connection.cursor() as cursor:
+                cursor.execute(sql_query, args)
+                result = None
+                if fetch:
+                    if count:
+                        result = cursor.fetchmany(int(count))
+                    else:
+                        result = cursor.fetchall()
                 else:
-                    result = cursor.fetchall()
-            else:
-                result = ''
-            cursor.close()
-            return result
+                    result = ''
+                cursor.close()
+                return result
 
         except (Exception, Error) as error:
-            return "Ошибка при работе с PostgreSQL" + error
+            raise Exception("Ошибка при работе с PostgreSQL: " + str(error))

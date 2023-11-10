@@ -12,7 +12,19 @@ def required_payload(*args):
             if all(check):
                 return func(tuple([json[arg] for arg in args]), *k.values())
             else:
-                return Response(status=200, response="Payload doesnt exist")
+                raise Exception("Payload doesnt exist")
+
         return wrapper
 
     return decorator
+
+
+def error(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as error:
+            return Response(status=500, response=str(error))
+
+    return wrapper
