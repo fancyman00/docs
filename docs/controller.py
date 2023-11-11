@@ -22,11 +22,16 @@ GET_ALL_DOCUMENT_QUERY = """SELECT docs.id, docs.content, docs.header, docs.type
        array_agg(array[doc_links.link_id, doc_links.type]) as links
 FROM docs left join doc_links ON docs.id=doc_links.id GROUP BY docs.id, docs.content, docs.header, docs.type
 ORDER BY docs.id;"""
+DELETE_DOCUMENT_QUERY = """delete from docs where id = %s"""
+DELETE_DOCUMENT_LINK_QUERY = """delete from doc_links where id = %s and type = %s and link_id = %s"""
 
 
 class DocumentController:
     def __init__(self, db: Database):
         self.db = db
+
+    def delete_document(self, id):
+        return self.db.execute(DELETE_DOCUMENT_QUERY, args=(id))
 
     def create_document(self, args_tuple: tuple):
         return self.db.execute(CREATE_DOCUMENT_QUERY, args=args_tuple)
@@ -47,3 +52,6 @@ class DocumentController:
 
     def create_document_link(self, args_tuple):
         return self.db.execute(CREATE_DOCUMENT_LINK_QUERY, args=args_tuple)
+
+    def delete_document_link(self, args_tuple):
+        return self.db.execute(DELETE_DOCUMENT_LINK_QUERY, args=args_tuple)

@@ -31,7 +31,7 @@ class DocumentApi:
         @error
         @self.logger.request('Удаление документа')
         def delete(id):
-            return 'DELETE ' + id
+            return self.controller.delete_document(id)
 
         @app.put(route + '/<id>')
         @error
@@ -39,12 +39,19 @@ class DocumentApi:
         def put(id):
             return 'PUT ' + id
 
-        @app.put(route + '/link/<id>')
+        @app.post(route + '/link/<id>')
         @error
         @self.logger.request('Изменение связи документа')
         @required_payload('type', 'link_id')
         def link(payload, id):
             return self.controller.create_document_link((int(id), *payload))
+
+        @app.delete(route + '/link/<id>')
+        @error
+        @self.logger.request('Удаление связи документа')
+        @required_payload('type', 'link_id')
+        def delete_link(payload, id):
+            return self.controller.delete_document_link((int(id), *payload))
 
         @app.post(route)
         @error
