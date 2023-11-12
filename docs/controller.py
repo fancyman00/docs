@@ -12,7 +12,8 @@ def parse_document_data(data):
     }
 
 
-CREATE_DOCUMENT_QUERY = """insert into public.docs (content, header, type, id) values (%s, %s, %s);"""
+CREATE_DOCUMENT_QUERY = """insert into public.docs (content, header, type, id) values (%s, %s, %s, nextval('unique_id'));"""
+UPDATE_DOCUMENT_QUERY = """update public.docs set content = %s, header=%s, type=%s where id = %s"""
 CREATE_DOCUMENT_LINK_QUERY = """insert into doc_links (id, type, link_id) values (%s, %s, %s);"""
 GET_DOCUMENT_QUERY = """SELECT docs.id, docs.content, docs.header, docs.type,
        array_agg(array[doc_links.link_id, doc_links.type]) as links
@@ -36,6 +37,9 @@ class DocumentController:
     def create_document(self, args_tuple: tuple):
         return self.db.execute(CREATE_DOCUMENT_QUERY, args=args_tuple)
 
+    def edit_document(self, args_tuple: tuple):
+        return self.db.execute(UPDATE_DOCUMENT_QUERY, args=args_tuple)
+
     def get_document(self, id: int):
         data = self.db.execute(GET_DOCUMENT_QUERY, args=(id), fetch=True)[0]
         return parse_document_data(data)
@@ -46,9 +50,6 @@ class DocumentController:
             return [parse_document_data(row) for row in data]
         else:
             return [parse_document_data(row) for row in [data]]
-
-    def edit_document(self, id):
-        return 'PUT'
 
     def create_document_link(self, args_tuple):
         return self.db.execute(CREATE_DOCUMENT_LINK_QUERY, args=args_tuple)

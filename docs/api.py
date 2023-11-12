@@ -36,8 +36,9 @@ class DocumentApi:
         @app.put(route + '/<id>')
         @error
         @self.logger.request('Изменение документа')
-        def put(id):
-            return 'PUT ' + id
+        @required_payload('content', 'header', 'type')
+        def put(payload, id):
+            return self.controller.edit_document((*payload, int(id)))
 
         @app.post(route + '/link/<id>')
         @error

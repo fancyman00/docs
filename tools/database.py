@@ -30,7 +30,6 @@ class Database:
                         result = cursor.fetchall()
                 else:
                     result = ''
-                cursor.close()
                 return result
 
         except (Exception, Error) as error:
