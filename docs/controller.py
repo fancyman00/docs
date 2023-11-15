@@ -8,7 +8,7 @@ def parse_document_data(data):
         'content': data[1],
         'header': data[2],
         'type': Types(data[3]).get_name(),
-        'linkId_type': data[4]
+        'links': [{"document_id": link[0], "link_type": link[1]} for link in data[4] if link[0] and link[1]]
     }
 
 
